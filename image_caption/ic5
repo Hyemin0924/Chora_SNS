@@ -1,0 +1,53 @@
+from transformers import BlipProcessor, BlipForConditionalGeneration
+from matplotlib import colors
+from PIL import Image
+import spacy
+import matplotlib.pyplot as plt
+import extcolors
+import webcolors
+import json
+
+
+def find_closest_color(rgb):
+    differences = {}
+    for color_hex, color_name in webcolors.CSS3_HEX_TO_NAMES.items():
+        r, g, b = webcolors.hex_to_rgb(color_hex)
+        difference = sum([(r - rgb[0]) ** 2, (g - rgb[1]) ** 2, (b - rgb[2]) ** 2])
+        differences[difference] = color_name
+    closest_color_name = differences[min(differences.keys())]
+    return closest_color_name
+def ic5(image_path):
+    model_name = "Salesforce/blip-image-captioning-large"
+    processor = BlipProcessor.from_pretrained(model_name)
+    model = BlipForConditionalGeneration.from_pretrained(model_name)
+    image = Image.open(image_path)
+    inputs = processor(images=image, return_tensors="pt")
+    outputs = model.generate(**inputs)
+
+    caption = processor.decode(outputs[0], skip_special_tokens=True)
+
+    nlp = spacy.load("en_core_web_sm")
+
+    sentence = caption
+    doc = nlp(sentence)
+
+    result = [chunk.text for chunk in doc.noun_chunks]
+
+
+    colors, pixel_count = extcolors.extract_from_image(image)
+    most_frequent_color = colors[0]
+    closest_color = find_closest_color(most_frequent_color[0])
+    result.append(closest_color)
+    
+
+
+
+    # 모든 결과에 공통으로 추가되는 단어들
+    common_words = ["high quality", "masterpiece", "high-resolution"]
+    common_words.extend(result)
+    result = common_words
+
+    formatted_result = ', '.join(result)
+    return formatted_result
+
+
