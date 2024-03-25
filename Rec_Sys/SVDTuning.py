@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 
 # Parameter
-testsubject = 1
+testsubject = 5
 
 def LoadMovieLensData():
     ml = MovieLens()
