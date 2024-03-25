@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 from surprise.model_selection import train_test_split
 from surprise.model_selection import LeaveOneOut
 from surprise import KNNBaseline
@@ -63,6 +62,7 @@ class EvaluationData:
     def GetLOOCVAntiTestSet(self):
         return self.LOOCVAntiTestSet
     
+    # 항목간 유사도 행렬 계산
     def GetSimilarities(self):
         return self.simsAlgo
     

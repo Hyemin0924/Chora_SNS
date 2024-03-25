@@ -7,7 +7,7 @@ url = 'http://127.0.0.1:5000/predict'
 #url = 'https://petitionai.azurewebsites.net/predict'
 # POST 요청으로 보낼 데이터
 user_Id = 672
-RecNum = 5
+RecNum = 10
 data = {'userId': user_Id, 'RecNum': RecNum}
 
 # JSON 문자열로 직렬화

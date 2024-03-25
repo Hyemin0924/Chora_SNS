@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import csv
 import sys
@@ -7,36 +8,36 @@ from surprise import Dataset
 from surprise import Reader
 
 from collections import defaultdict
+import numpy as np
 
-class postLens:
+class MovieLens:
 
-    postID_to_name = {}
-    name_to_postID = {}
+    movieID_to_name = {}
+    name_to_movieID = {}
     ratingsPath = './ratings.csv'
-    postsPath = './posts.csv'
+    moviesPath = './movies.csv'
     
-    def loadpostLensLatestSmall(self):
+    def loadMovieLensLatestSmall(self):
 
         # Look for files relative to the directory we are running from
         os.chdir(os.path.dirname(sys.argv[0]))
 
         ratingsDataset = 0
-        self.postID_to_name = {}
-        self.name_to_postID = {}
+        self.movieID_to_name = {}
+        self.name_to_movieID = {}
 
         reader = Reader(line_format='user item rating timestamp', sep=',', skip_lines=1)
 
         ratingsDataset = Dataset.load_from_file(self.ratingsPath, reader=reader)
-        # ratingsDataset.raw_ratings = [r for r in ratingsDataset.raw_ratings if r[2] >= 4.0]
 
-        with open(self.postsPath, newline='', encoding='ISO-8859-1') as csvfile:
-                postReader = csv.reader(csvfile)
-                next(postReader)  #Skip header line
-                for row in postReader:
-                    postID = int(row[0])
-                    postName = row[1]
-                    self.postID_to_name[postID] = postName
-                    self.name_to_postID[postName] = postID
+        with open(self.moviesPath, newline='', encoding='ISO-8859-1') as csvfile:
+                movieReader = csv.reader(csvfile)
+                next(movieReader)  #Skip header line
+                for row in movieReader:
+                    movieID = int(row[0])
+                    movieName = row[1]
+                    self.movieID_to_name[movieID] = movieName
+                    self.name_to_movieID[movieName] = movieID
 
         return ratingsDataset
 
@@ -49,9 +50,9 @@ class postLens:
             for row in ratingReader:
                 userID = int(row[0])
                 if (user == userID):
-                    postID = int(row[1])
+                    movieID = int(row[1])
                     rating = float(row[2])
-                    userRatings.append((postID, rating))
+                    userRatings.append((movieID, rating))
                     hitUser = True
                 if (hitUser and (user != userID)):
                     break
@@ -65,11 +66,11 @@ class postLens:
             ratingReader = csv.reader(csvfile)
             next(ratingReader)
             for row in ratingReader:
-                postID = int(row[1])
-                ratings[postID] += 1
+                movieID = int(row[1])
+                ratings[movieID] += 1
         rank = 1
-        for postID, ratingCount in sorted(ratings.items(), key=lambda x: x[1], reverse=True):
-            rankings[postID] = rank
+        for movieID, ratingCount in sorted(ratings.items(), key=lambda x: x[1], reverse=True):
+            rankings[movieID] = rank
             rank += 1
         return rankings
     
@@ -77,11 +78,11 @@ class postLens:
         genres = defaultdict(list)
         genreIDs = {}
         maxGenreID = 0
-        with open(self.postsPath, newline='', encoding='ISO-8859-1') as csvfile:
-            postReader = csv.reader(csvfile)
-            next(postReader)  #Skip header line
-            for row in postReader:
-                postID = int(row[0])
+        with open(self.moviesPath, newline='', encoding='ISO-8859-1') as csvfile:
+            movieReader = csv.reader(csvfile)
+            next(movieReader)  #Skip header line
+            for row in movieReader:
+                movieID = int(row[0])
                 genreList = row[2].split('|')
                 genreIDList = []
                 for genre in genreList:
@@ -92,29 +93,29 @@ class postLens:
                         genreIDs[genre] = genreID
                         maxGenreID += 1
                     genreIDList.append(genreID)
-                genres[postID] = genreIDList
+                genres[movieID] = genreIDList
         # Convert integer-encoded genre lists to bitfields that we can treat as vectors
-        for (postID, genreIDList) in genres.items():
+        for (movieID, genreIDList) in genres.items():
             bitfield = [0] * maxGenreID
             for genreID in genreIDList:
                 bitfield[genreID] = 1
-            genres[postID] = bitfield            
+            genres[movieID] = bitfield            
         
         return genres
     
     def getYears(self):
         p = re.compile(r"(?:\((\d{4})\))?\s*$")
         years = defaultdict(int)
-        with open(self.postsPath, newline='', encoding='ISO-8859-1') as csvfile:
-            postReader = csv.reader(csvfile)
-            next(postReader)
-            for row in postReader:
-                postID = int(row[0])
+        with open(self.moviesPath, newline='', encoding='ISO-8859-1') as csvfile:
+            movieReader = csv.reader(csvfile)
+            next(movieReader)
+            for row in movieReader:
+                movieID = int(row[0])
                 title = row[1]
                 m = p.search(title)
                 year = m.group(1)
                 if year:
-                    years[postID] = int(year)
+                    years[movieID] = int(year)
         return years
     
     def getMiseEnScene(self):
@@ -123,7 +124,7 @@ class postLens:
             mesReader = csv.reader(csvfile)
             next(mesReader)
             for row in mesReader:
-                postID = int(row[0])
+                movieID = int(row[0])
                 avgShotLength = float(row[1])
                 meanColorVariance = float(row[2])
                 stddevColorVariance = float(row[3])
@@ -131,18 +132,18 @@ class postLens:
                 stddevMotion = float(row[5])
                 meanLightingKey = float(row[6])
                 numShots = float(row[7])
-                mes[postID] = [avgShotLength, meanColorVariance, stddevColorVariance,
+                mes[movieID] = [avgShotLength, meanColorVariance, stddevColorVariance,
                    meanMotion, stddevMotion, meanLightingKey, numShots]
         return mes
     
-    def getpostName(self, postID):
-        if postID in self.postID_to_name:
-            return self.postID_to_name[postID]
+    def getMovieName(self, movieID):
+        if movieID in self.movieID_to_name:
+            return self.movieID_to_name[movieID]
         else:
             return ""
         
-    def getpostID(self, postName):
-        if postName in self.name_to_postID:
-            return self.name_to_postID[postName]
+    def getMovieID(self, movieName):
+        if movieName in self.name_to_movieID:
+            return self.name_to_movieID[movieName]
         else:
             return 0

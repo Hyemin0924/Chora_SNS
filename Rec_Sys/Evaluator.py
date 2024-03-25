@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 from EvaluationData import EvaluationData
 from EvaluatedAlgorithm import EvaluatedAlgorithm
 
@@ -47,33 +46,56 @@ class Evaluator:
             print("Diversity: 1-S, where S is the average similarity score between every possible pair of recommendations")
             print("           for a given user. Higher means more diverse.")
             print("Novelty:   Average popularity rank of recommended items. Higher means more novel.")
-
-    # 새로운 메서드 추가: 모델 학습
-    def TrainModels(self):
+        
+    def SampleTopNRecs(self, ml, testSubject, k=10):
+        
         for algo in self.algorithms:
-            print("\nTraining model for recommender ", algo.GetName())
+            print("\nUsing recommender ", algo.GetName())
+            
+            print("\nBuilding recommendation model...")
             trainSet = self.dataset.GetFullTrainSet()
             algo.GetAlgorithm().fit(trainSet)
             
-    # 새로운 메서드 추가: 추천 수행
-    def GenerateRecommendations(self, ml, testSubject, numRecs=10):
+            print("Computing recommendations...")
+            testSet = self.dataset.GetAntiTestSetForUser(testSubject)
+        
+            predictions = algo.GetAlgorithm().test(testSet)
+            
+            recommendations = []
+            
+            print ("\nWe recommend:")
+            for userID, movieID, actualRating, estimatedRating, _ in predictions:
+                intMovieID = int(movieID)
+                recommendations.append((intMovieID, estimatedRating))
+            
+            recommendations.sort(key=lambda x: x[1], reverse=True)
+            
+            for ratings in recommendations[:10]:
+                print(ml.getMovieName(ratings[0]), ratings[1])
+
+    def GetRecommendations(self, testSubject, k=10):
+        recommendations = {}
         for algo in self.algorithms:
             print("\nUsing recommender ", algo.GetName())
+
+            print("\nBuilding recommendation model...")
+            trainSet = self.dataset.GetFullTrainSet()
+            algo.GetAlgorithm().fit(trainSet)
+
+            print("Computing recommendations...")
             testSet = self.dataset.GetAntiTestSetForUser(testSubject)
+
             predictions = algo.GetAlgorithm().test(testSet)
-            recommendations = []
-            for userID, postID, _, estimatedRating, _ in predictions:
-                intpostID = int(postID)
-                recommendations.append((intpostID, estimatedRating))
-            recommendations.sort(key=lambda x: x[1], reverse=True)
-            RecSys = []
-            for ratings in recommendations[:numRecs]:
-                RecSys.append(ratings[0])
-            return RecSys
-                
 
+            user_recommendations = []
+            for userID, movieID, actualRating, estimatedRating, _ in predictions:
+                intMovieID = int(movieID)
+                user_recommendations.append((intMovieID, estimatedRating))
 
-                
+            user_recommendations.sort(key=lambda x: x[1], reverse=True)
+            recommendations[algo.GetName()] = user_recommendations[:k]
+
+        return recommendations
 
             
             

@@ -1,4 +1,4 @@
-postId,title,genres
+movieId,title,genres
 1,Toy Story (1995),Adventure|Animation|Children|Comedy|Fantasy
 2,Jumanji (1995),Adventure|Children|Fantasy
 3,Grumpier Old Men (1995),Comedy|Romance
@@ -3820,7 +3820,7 @@ postId,title,genres
 4903,In the Bedroom (2001),Drama
 4911,Jabberwocky (1977),Adventure|Comedy|Fantasy
 4912,Funny Girl (1968),Drama|Musical|Romance
-4914,Breathless (? bout de souffle) (1960),Crime|Drama|Romance
+4914,Breathless (À bout de souffle) (1960),Crime|Drama|Romance
 4915,"Beastmaster, The (1982)",Action|Adventure|Fantasy
 4920,"Now, Voyager (1942)",Drama|Romance
 4921,Little Women (1933),Drama|Romance
@@ -4198,7 +4198,7 @@ postId,title,genres
 5553,Stakeout (1987),Comedy|Crime|Romance|Thriller
 5556,FearDotCom (a.k.a. Fear.com) (a.k.a. Fear Dot Com) (2002),Crime|Horror|Thriller
 5558,Love and a Bullet (2002),Action|Crime
-5560,? nous la liberté (Freedom for Us) (1931),Comedy|Musical
+5560,À nous la liberté (Freedom for Us) (1931),Comedy|Musical
 5561,True Colors (1991),Drama
 5562,Snipes (2001),Drama|Thriller
 5564,Swimfan (2002),Thriller
@@ -4491,7 +4491,7 @@ postId,title,genres
 6157,Daredevil (2003),Action|Crime
 6159,All the Real Girls (2003),Drama|Romance
 6162,Gerry (2002),Adventure|Drama
-6163,He Loves Me... He Loves Me Not (? la folie... pas du tout) (2002),Romance|Thriller
+6163,He Loves Me... He Loves Me Not (À la folie... pas du tout) (2002),Romance|Thriller
 6166,Dennis the Menace (1993),Comedy
 6170,"Black Stallion, The (1979)",Adventure|Children|Drama
 6178,"Patch of Blue, A (1965)",Drama|Romance
@@ -5057,7 +5057,7 @@ postId,title,genres
 7206,Mon Oncle (My Uncle) (1958),Comedy
 7207,Where the Boys Are (1960),Comedy
 7208,Dr. Jekyll and Mr. Hyde (1941),Drama|Horror
-7209,"M. Hulot?�s Holiday (Mr. Hulot's Holiday) (Vacances de Monsieur Hulot, Les) (1953)",Comedy
+7209,"M. Hulot’s Holiday (Mr. Hulot's Holiday) (Vacances de Monsieur Hulot, Les) (1953)",Comedy
 7210,My Darling Clementine (1946),Western
 7211,People Will Talk (1951),Comedy|Romance
 7212,I Was a Male War Bride (1949),Comedy|Romance
@@ -6925,7 +6925,7 @@ postId,title,genres
 58879,Shine a Light (2008),Documentary|Musical|IMAX
 58889,"Business of Being Born, The (2008)",Documentary
 58904,Chan Is Missing (1982),Crime
-58964,Inside (? l'intérieur) (2007),Horror|Thriller
+58964,Inside (À l'intérieur) (2007),Horror|Thriller
 58972,Nim's Island (2008),Adventure|Comedy|Fantasy
 58975,"Ruins, The (2008)",Horror|Thriller
 58998,Forgetting Sarah Marshall (2008),Comedy|Romance

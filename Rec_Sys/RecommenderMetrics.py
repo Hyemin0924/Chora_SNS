@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import itertools
 
 from surprise import accuracy
@@ -15,9 +16,9 @@ class RecommenderMetrics:
         topN = defaultdict(list)
 
 
-        for userID, postID, actualRating, estimatedRating, _ in predictions:
+        for userID, movieID, actualRating, estimatedRating, _ in predictions:
             if (estimatedRating >= minimumRating):
-                topN[int(userID)].append((int(postID), estimatedRating))
+                topN[int(userID)].append((int(movieID), estimatedRating))
 
         for userID, ratings in topN.items():
             ratings.sort(key=lambda x: x[1], reverse=True)
@@ -32,11 +33,11 @@ class RecommenderMetrics:
         # For each left-out rating
         for leftOut in leftOutPredictions:
             userID = leftOut[0]
-            leftOutpostID = leftOut[1]
+            leftOutMovieID = leftOut[1]
             # Is it in the predicted top 10 for this user?
             hit = False
-            for postID, predictedRating in topNPredicted[int(userID)]:
-                if (int(leftOutpostID) == int(postID)):
+            for movieID, predictedRating in topNPredicted[int(userID)]:
+                if (int(leftOutMovieID) == int(movieID)):
                     hit = True
                     break
             if (hit) :
@@ -52,13 +53,13 @@ class RecommenderMetrics:
         total = 0
 
         # For each left-out rating
-        for userID, leftOutpostID, actualRating, estimatedRating, _ in leftOutPredictions:
+        for userID, leftOutMovieID, actualRating, estimatedRating, _ in leftOutPredictions:
             # Only look at ability to recommend things the users actually liked...
             if (actualRating >= ratingCutoff):
                 # Is it in the predicted top 10 for this user?
                 hit = False
-                for postID, predictedRating in topNPredicted[int(userID)]:
-                    if (int(leftOutpostID) == postID):
+                for movieID, predictedRating in topNPredicted[int(userID)]:
+                    if (int(leftOutMovieID) == movieID):
                         hit = True
                         break
                 if (hit) :
@@ -74,11 +75,11 @@ class RecommenderMetrics:
         total = defaultdict(float)
 
         # For each left-out rating
-        for userID, leftOutpostID, actualRating, estimatedRating, _ in leftOutPredictions:
+        for userID, leftOutMovieID, actualRating, estimatedRating, _ in leftOutPredictions:
             # Is it in the predicted top N for this user?
             hit = False
-            for postID, predictedRating in topNPredicted[int(userID)]:
-                if (int(leftOutpostID) == postID):
+            for movieID, predictedRating in topNPredicted[int(userID)]:
+                if (int(leftOutMovieID) == movieID):
                     hit = True
                     break
             if (hit) :
@@ -94,13 +95,13 @@ class RecommenderMetrics:
         summation = 0
         total = 0
         # For each left-out rating
-        for userID, leftOutpostID, actualRating, estimatedRating, _ in leftOutPredictions:
+        for userID, leftOutMovieID, actualRating, estimatedRating, _ in leftOutPredictions:
             # Is it in the predicted top N for this user?
             hitRank = 0
             rank = 0
-            for postID, predictedRating in topNPredicted[int(userID)]:
+            for movieID, predictedRating in topNPredicted[int(userID)]:
                 rank = rank + 1
-                if (int(leftOutpostID) == postID):
+                if (int(leftOutMovieID) == movieID):
                     hitRank = rank
                     break
             if (hitRank > 0) :
@@ -115,7 +116,7 @@ class RecommenderMetrics:
         hits = 0
         for userID in topNPredicted.keys():
             hit = False
-            for postID, predictedRating in topNPredicted[userID]:
+            for movieID, predictedRating in topNPredicted[userID]:
                 if (predictedRating >= ratingThreshold):
                     hit = True
                     break
@@ -131,10 +132,10 @@ class RecommenderMetrics:
         for userID in topNPredicted.keys():
             pairs = itertools.combinations(topNPredicted[userID], 2)
             for pair in pairs:
-                post1 = pair[0][0]
-                post2 = pair[1][0]
-                innerID1 = simsAlgo.trainset.to_inner_iid(str(post1))
-                innerID2 = simsAlgo.trainset.to_inner_iid(str(post2))
+                movie1 = pair[0][0]
+                movie2 = pair[1][0]
+                innerID1 = simsAlgo.trainset.to_inner_iid(str(movie1))
+                innerID2 = simsAlgo.trainset.to_inner_iid(str(movie2))
                 similarity = simsMatrix[innerID1][innerID2]
                 total += similarity
                 n += 1
@@ -147,8 +148,8 @@ class RecommenderMetrics:
         total = 0
         for userID in topNPredicted.keys():
             for rating in topNPredicted[userID]:
-                postID = rating[0]
-                rank = rankings[postID]
+                movieID = rating[0]
+                rank = rankings[movieID]
                 total += rank
                 n += 1
         return total / n
